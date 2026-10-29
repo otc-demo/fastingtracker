@@ -199,6 +199,31 @@
       </p>
     </div>
 
+    <!-- GEWICHTS-TRACKING IM ESSENSFENSTER (Wird dynamisch eingeblendet, wenn aktiviert) -->
+    <div id="weightContainer" class="w-full bg-[#1c1c1e] rounded-2xl p-4 mt-3 border border-[#2c2c2e]/70 hidden">
+      <div class="flex items-center justify-between mb-2">
+        <div class="flex items-center gap-2">
+          <i data-lucide="scale" class="w-4 h-4 text-[#ff9f0a]"></i>
+          <span class="text-sm font-semibold text-white">Heutiges Gewicht</span>
+        </div>
+        <span id="weightStatusBadge" class="text-[10px] text-[#8e8e93]">Optional</span>
+      </div>
+      <div class="flex gap-2">
+        <input 
+          type="number" 
+          step="0.1" 
+          id="weightInput" 
+          placeholder="z. B. 78.5" 
+          class="flex-1 bg-[#2c2c2e] text-white px-3.5 py-2 rounded-xl border border-[#3a3a3c] text-sm focus:outline-none focus:border-[#ff9f0a]"
+        >
+        <button 
+          onclick="saveCurrentWeight()" 
+          class="px-4 py-2 rounded-xl bg-[#2c2c2e] border border-[#3a3a3c] text-white text-xs font-semibold hover:bg-[#3a3a3c] btn-press">
+          Speichern
+        </button>
+      </div>
+    </div>
+
   </main>
 
   <!-- AKTION-BUTTONS -->
@@ -222,17 +247,17 @@
     </div>
   </footer>
 
-  <!-- MODAL: STARTZEIT ANPASSEN -->
+  <!-- MODAL: STARTZEIT ANPASSEN & EINSTELLUNGEN -->
   <div id="editStartModal" class="fixed inset-0 bg-black/75 ios-blur z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="bg-[#1c1c1e] border-t sm:border border-[#2c2c2e] rounded-t-3xl sm:rounded-3xl w-full max-w-md p-6">
+    <div class="bg-[#1c1c1e] border-t sm:border border-[#2c2c2e] rounded-t-3xl sm:rounded-3xl w-full max-w-md p-6 max-h-[90vh] overflow-y-auto no-scrollbar">
       <div class="flex justify-between items-center mb-4">
-        <h2 class="text-xl font-bold text-white">Startzeit anpassen</h2>
+        <h2 class="text-xl font-bold text-white">Startzeit & Einstellungen</h2>
         <button onclick="closeEditStartModal()" class="w-8 h-8 rounded-full bg-[#2c2c2e] text-[#8e8e93] flex items-center justify-center">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
       <p class="text-xs text-[#8e8e93] mb-4">
-        Hast du das Eintragen vergessen oder gestern Abend begonnen? Hier kannst du die Uhrzeit beliebig vordatieren.
+        Hast du das Eintragen vergessen oder gestern Abend begonnen? Hier kannst du die Uhrzeit vordatieren und Optionen anpassen.
       </p>
 
       <div class="space-y-4">
@@ -241,7 +266,20 @@
           id="customStartTimeInput" 
           class="w-full bg-[#2c2c2e] text-white p-3.5 rounded-xl border border-[#3a3a3c] text-center text-lg font-medium focus:outline-none focus:border-[#ff9f0a]"
         >
-      <!-- Optionaler Slider für Benachrichtigung / iOS-Timer inkl. 1-Klick-Setup -->
+
+        <!-- NEU: Option für Gewichts-Tracking -->
+        <div class="bg-[#2c2c2e] p-3.5 rounded-xl border border-[#3a3a3c] flex items-center justify-between">
+          <div>
+            <div class="text-sm font-semibold text-white">Gewichts-Tracking</div>
+            <div class="text-[11px] text-[#8e8e93]">Erfasst dein Gewicht im Essensfenster</div>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" id="weightTrackingToggleInput" onchange="toggleWeightTracking(this.checked)" class="sr-only peer">
+            <div class="w-11 h-6 bg-[#3a3a3c] rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#ff9f0a]"></div>
+          </label>
+        </div>
+
+        <!-- Optionaler Slider für Benachrichtigung / iOS-Timer inkl. 1-Klick-Setup -->
         <div class="bg-[#2c2c2e] p-3.5 rounded-xl border border-[#3a3a3c] space-y-2.5">
           <div class="flex items-center justify-between">
             <div>
@@ -310,7 +348,9 @@
     let state = {
       isFasting: false,
       startTime: null,
-      notifyEnabled: false, // <-- NEU: Standardmäßig ausgeschaltet
+      notifyEnabled: false,
+      weightTrackingEnabled: false, // <-- NEU
+      currentWeight: '',            // <-- NEU
       history: []
     };
 
@@ -331,6 +371,8 @@
     const stageRange = document.getElementById('stageRange');
     const stageDescription = document.getElementById('stageDescription');
     const stageIndicatorDot = document.getElementById('stageIndicatorDot');
+    const weightContainer = document.getElementById('weightContainer');
+    const weightInput = document.getElementById('weightInput');
 
     function init() {
       loadState();
@@ -354,13 +396,32 @@
     function saveState() {
       localStorage.setItem('fasting_16_8_state', JSON.stringify(state));
     }
-    // NEU: Speichert die Slider-Einstellung sofort beim Umschalten
+
     function toggleNotifications(enabled) {
       state.notifyEnabled = enabled;
       saveState();
     }
 
-    // NEU: Löst den iOS-Kurzbefehl nur aus, wenn der Slider aktiv ist
+    // NEU: Schaltet das Gewichts-Tracking per Toggle um
+    function toggleWeightTracking(enabled) {
+      state.weightTrackingEnabled = enabled;
+      saveState();
+      updateUI();
+    }
+
+    // NEU: Speichert das Gewicht für den heutigen Tag
+    function saveCurrentWeight() {
+      const val = weightInput.value.trim();
+      if (val) {
+        state.currentWeight = val;
+        saveState();
+        document.getElementById('weightStatusBadge').textContent = "Gespeichert ✓";
+        setTimeout(() => {
+          document.getElementById('weightStatusBadge').textContent = "Optional";
+        }, 2000);
+      }
+    }
+
     function triggeriOSTimer() {
       if (!state.notifyEnabled || !state.startTime) return;
       const start = new Date(state.startTime);
@@ -371,11 +432,12 @@
         window.location.href = `shortcuts://run-shortcut?name=Fasten&input=text&text=${remainingSeconds}`;
       }
     }
-    // GENAU HIER DARUNTER fügst du canceliOSTimer ein:
+
     function canceliOSTimer() {
       if (!state.notifyEnabled) return;
       window.location.href = `shortcuts://run-shortcut?name=Fasten&input=text&text=0`;
     }
+
     function updateDateDisplay() {
       const d = new Date();
       const options = { weekday: 'short', day: 'numeric', month: 'short' };
@@ -383,6 +445,16 @@
     }
 
     function updateUI() {
+      // Gewichts-Container nur im Essensfenster (wenn nicht im Fastenmodus) und bei aktiviertem Tracking anzeigen
+      if (!state.isFasting && state.weightTrackingEnabled) {
+        weightContainer.classList.remove('hidden');
+        if (state.currentWeight && weightInput.value === '') {
+          weightInput.value = state.currentWeight;
+        }
+      } else {
+        weightContainer.classList.add('hidden');
+      }
+
       if (!state.isFasting || !state.startTime) {
         // Zustand: Essensfenster / Pause
         stateBadge.textContent = "Essensfenster";
@@ -430,7 +502,7 @@
       startTimeLabel.textContent = start.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) + ' Uhr';
       endTimeLabel.textContent = targetEnd.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) + ' Uhr';
 
-      // Ring-Fortschritt (wird immer mehr orange)
+      // Ring-Fortschritt
       const ratio = Math.min(Math.max(elapsedMs / TARGET_MS, 0), 1);
       const offset = CIRCUMFERENCE - (ratio * CIRCUMFERENCE);
       progressCircle.style.strokeDashoffset = offset;
@@ -439,13 +511,11 @@
       ringPercentBadge.textContent = `${percent}%`;
 
       if (remainingMs > 0) {
-        // Fasten läuft noch: Verbleibende Zeit ausschließlich in der Mitte des Rings
         timerSubLabel.textContent = "Verbleibende Zeit";
         mainTimeDisplay.textContent = formatMs(remainingMs);
         progressCircle.setAttribute('stroke', '#ff9f0a');
         ringPercentBadge.className = "mt-2.5 text-xs font-bold px-2.5 py-0.5 rounded-full bg-[#ff9f0a]/20 text-[#ff9f0a]";
       } else {
-        // 16 Stunden geschafft (+ Bonuszeit)
         const overtimeMs = now - targetEnd;
         timerSubLabel.textContent = "Ziel erreicht (+)";
         mainTimeDisplay.textContent = `+${formatMs(overtimeMs)}`;
@@ -453,7 +523,6 @@
         ringPercentBadge.className = "mt-2.5 text-xs font-bold px-2.5 py-0.5 rounded-full bg-[#30d158]/20 text-[#30d158]";
       }
 
-      // Hauptbutton auf "Beenden" stellen
       if (lastRenderedFastingState !== true) {
         mainActionButton.className = "flex-1 py-4 px-6 rounded-2xl font-bold text-base flex items-center justify-center gap-2 transition duration-200 btn-press shadow-lg shadow-red-500/10 bg-[#ff453a] text-white";
         actionButtonText.textContent = "Fasten beenden";
@@ -462,7 +531,6 @@
         lastRenderedFastingState = true;
       }
 
-      // Phase ermitteln
       updatePhase(elapsedHours);
     }
 
@@ -485,7 +553,7 @@
         state.startTime = (new Date()).toISOString();
         saveState();
         updateUI();
-        triggeriOSTimer(); // <-- NEU
+        triggeriOSTimer();
       } else {
         finishFasting();
       }
@@ -497,19 +565,23 @@
       const durationMs = end - start;
       const durationHours = (durationMs / (1000 * 60 * 60)).toFixed(1);
 
+      // Historie mit aktuellem Gewicht ergänzen (falls eingetragen)
       state.history.unshift({
         id: Date.now(),
         end: end.toISOString(),
         durationHours: durationHours,
-        success: (durationMs / (1000 * 60 * 60)) >= FAST_HOURS
+        success: (durationMs / (1000 * 60 * 60)) >= FAST_HOURS,
+        weight: state.weightTrackingEnabled ? state.currentWeight : null
       });
 
       state.isFasting = false;
       state.startTime = null;
+      state.currentWeight = ''; // Reset für den nächsten Zyklus
+      weightInput.value = '';
       saveState();
       updateUI();
       openHistoryModal();
-      canceliOSTimer(); // <-- HIER EINFÜGEN
+      canceliOSTimer();
     }
 
     // Modal Funktionen
@@ -520,6 +592,7 @@
       const localISOTime = (new Date(now.getTime() - tzOffset)).toISOString().slice(0, 16);
       input.value = localISOTime;
       document.getElementById('notifyToggleInput').checked = !!state.notifyEnabled;
+      document.getElementById('weightTrackingToggleInput').checked = !!state.weightTrackingEnabled;
       document.getElementById('editStartModal').classList.remove('hidden');
     }
 
@@ -535,7 +608,7 @@
         saveState();
         updateUI();
         closeEditStartModal();
-        triggeriOSTimer(); // <-- NEU
+        triggeriOSTimer();
       }
     }
 
@@ -563,6 +636,9 @@
 
       container.innerHTML = state.history.map(item => {
         const dateStr = new Date(item.end).toLocaleDateString('de-DE', { day: '2-digit', month: 'short' });
+        // NEU: Gewichtsanzeige in der Historie, falls vorhanden
+        const weightDisplay = item.weight ? `<div class="text-xs text-[#ff9f0a] font-medium mt-0.5"><i data-lucide="scale" class="w-3 h-3 inline mr-1"></i>${item.weight} kg</div>` : '';
+        
         return `
           <div class="bg-[#2c2c2e]/60 p-3.5 rounded-xl border border-[#3a3a3c]/60 flex items-center justify-between">
             <div>
@@ -573,6 +649,7 @@
                 </span>
               </div>
               <span class="text-xs text-[#8e8e93]">${dateStr}</span>
+              ${weightDisplay}
             </div>
             <div class="text-right">
               <span class="text-base font-bold font-mono text-white">${item.durationHours}h</span>
