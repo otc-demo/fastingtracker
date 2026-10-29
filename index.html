@@ -28,7 +28,7 @@
       --orange: #ff9f0a;
       --green: #30d158;
       --red: #ff453a;
-      --text-muted: #8e8e93;
+      --text-muted: #aeaeb2; /* Helleres Grau für bessere Lesbarkeit */
     }
 
     * {
@@ -113,16 +113,16 @@
   <!-- HEADER -->
   <header class="flex justify-between items-center py-2">
     <div>
-      <span class="text-xs uppercase tracking-wider text-[#8e8e93] font-semibold" id="currentDateDisplay">HEUTE</span>
+      <span class="text-xs uppercase tracking-wider text-[#aeaeb2] font-semibold" id="currentDateDisplay">HEUTE</span>
       <h1 class="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
         16:8 Fasten
-        <span id="stateBadge" class="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-[#2c2c2e] text-[#8e8e93]">
+        <span id="stateBadge" class="text-xs px-3 py-1 rounded-full font-semibold bg-[#2c2c2e] text-[#aeaeb2]">
           Essensfenster
         </span>
       </h1>
     </div>
     
-    <button onclick="openHistoryModal()" class="w-10 h-10 rounded-full bg-[#1c1c1e] border border-[#2c2c2e] flex items-center justify-center text-[#8e8e93] active:text-white btn-press">
+    <button onclick="openHistoryModal()" class="w-11 h-11 rounded-full bg-[#1c1c1e] border border-[#2c2c2e] flex items-center justify-center text-[#aeaeb2] active:text-white btn-press">
       <i data-lucide="history" class="w-5 h-5"></i>
     </button>
   </header>
@@ -161,13 +161,13 @@
 
       <!-- Zentrierte Zeitanzeige direkt IM Ring -->
       <div class="ring-center-overlay">
-        <span id="timerSubLabel" class="text-[11px] font-semibold uppercase tracking-widest text-[#8e8e93] mb-1">
+        <span id="timerSubLabel" class="text-xs font-semibold uppercase tracking-widest text-[#aeaeb2] mb-1">
           Verbleibende Zeit
         </span>
         <div id="mainTimeDisplay" class="text-4xl font-extrabold tracking-tight tabular-nums font-mono text-white">
           16:00:00
         </div>
-        <div id="ringPercentBadge" class="mt-2.5 text-xs font-bold px-2.5 py-0.5 rounded-full bg-[#2c2c2e] text-[#8e8e93]">
+        <div id="ringPercentBadge" class="mt-2.5 text-xs font-bold px-3 py-0.5 rounded-full bg-[#2c2c2e] text-[#aeaeb2]">
           0%
         </div>
       </div>
@@ -175,38 +175,38 @@
 
     <!-- Start & Ziel Uhrzeit-Karten -->
     <div class="w-full grid grid-cols-2 gap-3 mt-5">
-      <div class="bg-[#1c1c1e] p-3.5 rounded-2xl border border-[#2c2c2e]/70 flex flex-col items-center justify-center">
-        <span class="text-[11px] text-[#8e8e93] uppercase font-semibold tracking-wider">Beginn</span>
-        <span id="startTimeLabel" class="text-base font-semibold text-white mt-0.5">--:--</span>
+      <div class="bg-[#1c1c1e] p-4 rounded-2xl border border-[#2c2c2e]/70 flex flex-col items-center justify-center">
+        <span class="text-xs text-[#aeaeb2] uppercase font-semibold tracking-wider">Beginn</span>
+        <span id="startTimeLabel" class="text-lg font-bold text-white mt-0.5">--:--</span>
       </div>
-      <div class="bg-[#1c1c1e] p-3.5 rounded-2xl border border-[#2c2c2e]/70 flex flex-col items-center justify-center">
-        <span class="text-[11px] text-[#8e8e93] uppercase font-semibold tracking-wider">Ziel-Uhrzeit</span>
-        <span id="endTimeLabel" class="text-base font-semibold text-white mt-0.5">--:--</span>
+      <div class="bg-[#1c1c1e] p-4 rounded-2xl border border-[#2c2c2e]/70 flex flex-col items-center justify-center">
+        <span class="text-xs text-[#aeaeb2] uppercase font-semibold tracking-wider">Ziel-Uhrzeit</span>
+        <span id="endTimeLabel" class="text-lg font-bold text-white mt-0.5">--:--</span>
       </div>
     </div>
 
     <!-- 16:8 KÖRPER-PHASEN INFO -->
     <div class="w-full bg-[#1c1c1e] rounded-2xl p-4 mt-3 border border-[#2c2c2e]/70">
-      <div class="flex items-center justify-between mb-1.5">
+      <div class="flex items-center justify-between mb-2">
         <div class="flex items-center gap-2">
-          <div id="stageIndicatorDot" class="w-2.5 h-2.5 rounded-full bg-[#8e8e93]"></div>
-          <span id="stageTitle" class="text-sm font-semibold text-white">Essensfenster</span>
+          <div id="stageIndicatorDot" class="w-3 h-3 rounded-full bg-[#aeaeb2]"></div>
+          <span id="stageTitle" class="text-sm font-bold text-white">Essensfenster</span>
         </div>
-        <span id="stageRange" class="text-xs text-[#8e8e93] font-mono">Pause</span>
+        <span id="stageRange" class="text-xs text-[#aeaeb2] font-mono font-semibold">Pause</span>
       </div>
-      <p id="stageDescription" class="text-xs text-[#8e8e93] leading-relaxed">
+      <p id="stageDescription" class="text-sm text-[#aeaeb2] leading-relaxed">
         Aktuell kein Fasten aktiv. Nimm deine Mahlzeiten ein und starte das Fasten nach dem letzten Essen.
       </p>
     </div>
 
     <!-- GEWICHTS-TRACKING IM ESSENSFENSTER -->
     <div id="weightContainer" class="w-full bg-[#1c1c1e] rounded-2xl p-4 mt-3 border border-[#2c2c2e]/70 hidden">
-      <div class="flex items-center justify-between mb-2">
+      <div class="flex items-center justify-between mb-2.5">
         <div class="flex items-center gap-2">
           <i data-lucide="scale" class="w-4 h-4 text-[#ff9f0a]"></i>
-          <span class="text-sm font-semibold text-white">Heutiges Gewicht</span>
+          <span class="text-sm font-bold text-white">Heutiges Gewicht</span>
         </div>
-        <span id="weightStatusBadge" class="text-[10px] text-[#8e8e93]">Optional</span>
+        <span id="weightStatusBadge" class="text-xs text-[#aeaeb2]">Optional</span>
       </div>
       <div class="flex gap-2">
         <input 
@@ -214,11 +214,11 @@
           step="0.1" 
           id="weightInput" 
           placeholder="z. B. 78.5" 
-          class="flex-1 bg-[#2c2c2e] text-white px-3.5 py-2 rounded-xl border border-[#3a3a3c] text-sm focus:outline-none focus:border-[#ff9f0a]"
+          class="flex-1 bg-[#2c2c2e] text-white px-4 py-2.5 rounded-xl border border-[#3a3a3c] text-sm font-medium focus:outline-none focus:border-[#ff9f0a]"
         >
         <button 
           onclick="saveCurrentWeight()" 
-          class="px-4 py-2 rounded-xl bg-[#2c2c2e] border border-[#3a3a3c] text-white text-xs font-semibold hover:bg-[#3a3a3c] btn-press">
+          class="px-4 py-2.5 rounded-xl bg-[#2c2c2e] border border-[#3a3a3c] text-white text-xs font-bold hover:bg-[#3a3a3c] btn-press">
           Speichern
         </button>
       </div>
@@ -241,7 +241,7 @@
       <button 
         onclick="openEditStartModal()" 
         title="Einstellungen"
-        class="w-14 rounded-2xl bg-[#1c1c1e] border border-[#2c2c2e] flex items-center justify-center text-[#8e8e93] active:text-white btn-press">
+        class="w-14 rounded-2xl bg-[#1c1c1e] border border-[#2c2c2e] flex items-center justify-center text-[#aeaeb2] active:text-white btn-press">
         <i data-lucide="clock" class="w-5 h-5"></i>
       </button>
     </div>
@@ -252,29 +252,29 @@
     <div class="bg-[#1c1c1e] border-t sm:border border-[#2c2c2e] rounded-t-3xl sm:rounded-3xl w-full max-w-md p-6 max-h-[90vh] overflow-y-auto no-scrollbar">
       <div class="flex justify-between items-center mb-4">
         <h2 class="text-xl font-bold text-white">Einstellungen</h2>
-        <button onclick="closeEditStartModal()" class="w-8 h-8 rounded-full bg-[#2c2c2e] text-[#8e8e93] flex items-center justify-center">
+        <button onclick="closeEditStartModal()" class="w-9 h-9 rounded-full bg-[#2c2c2e] text-[#aeaeb2] flex items-center justify-center">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
 
       <div class="space-y-4">
         <!-- Startzeit nachträglich anpassen -->
-        <div class="bg-[#2c2c2e] p-3.5 rounded-xl border border-[#3a3a3c] space-y-2">
-          <div class="text-sm font-semibold text-white">Startzeit anpassen</div>
-          <div class="text-[11px] text-[#8e8e93]">Falls du den Start verpasst hast oder vordatieren möchtest:</div>
+        <div class="bg-[#2c2c2e] p-4 rounded-xl border border-[#3a3a3c] space-y-2">
+          <div class="text-sm font-bold text-white">Startzeit anpassen</div>
+          <div class="text-xs text-[#aeaeb2]">Falls du den Start verpasst hast oder vordatieren möchtest:</div>
           <input 
             type="datetime-local" 
             id="customStartTimeInput" 
             onchange="applyCustomStartTime(this.value)"
-            class="w-full bg-[#1c1c1e] text-white p-3 rounded-xl border border-[#3a3a3c] text-center text-base font-medium focus:outline-none focus:border-[#ff9f0a]"
+            class="w-full bg-[#1c1c1e] text-white p-3.5 rounded-xl border border-[#3a3a3c] text-center text-base font-semibold focus:outline-none focus:border-[#ff9f0a]"
           >
         </div>
 
         <!-- Gewichts-Tracking Toggle -->
-        <div class="bg-[#2c2c2e] p-3.5 rounded-xl border border-[#3a3a3c] flex items-center justify-between">
+        <div class="bg-[#2c2c2e] p-4 rounded-xl border border-[#3a3a3c] flex items-center justify-between">
           <div>
-            <div class="text-sm font-semibold text-white">Gewichts-Tracking</div>
-            <div class="text-[11px] text-[#8e8e93]">Erfasst dein Gewicht im Essensfenster</div>
+            <div class="text-sm font-bold text-white">Gewichts-Tracking</div>
+            <div class="text-xs text-[#aeaeb2]">Erfasst dein Gewicht im Essensfenster</div>
           </div>
           <label class="relative inline-flex items-center cursor-pointer">
             <input type="checkbox" id="weightTrackingToggleInput" onchange="toggleWeightTracking(this.checked)" class="sr-only peer">
@@ -283,20 +283,20 @@
         </div>
 
         <!-- Benachrichtigung / iOS-Timer Toggle & Setup -->
-        <div class="bg-[#2c2c2e] p-3.5 rounded-xl border border-[#3a3a3c] space-y-2.5">
+        <div class="bg-[#2c2c2e] p-4 rounded-xl border border-[#3a3a3c] space-y-3">
           <div class="flex items-center justify-between">
             <div>
-              <div class="text-sm font-semibold text-white">Benachrichtigung bei Ziel</div>
-              <div class="text-[11px] text-[#8e8e93]">Startet & stoppt automatisch den iOS-Timer</div>
+              <div class="text-sm font-bold text-white">Benachrichtigung bei Ziel</div>
+              <div class="text-xs text-[#aeaeb2]">Startet & stoppt automatisch den iOS-Timer</div>
             </div>
             <label class="relative inline-flex items-center cursor-pointer">
               <input type="checkbox" id="notifyToggleInput" onchange="toggleNotifications(this.checked)" class="sr-only peer">
               <div class="w-11 h-6 bg-[#1c1c1e] rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#ff9f0a]"></div>
             </label>
           </div>
-          <div class="pt-2 border-t border-[#1c1c1e]/70 flex justify-between items-center">
-            <span class="text-[11px] text-[#8e8e93]">1x auf dem iPhone nötig:</span>
-            <a href="https://www.icloud.com/shortcuts/1d92994ae7364b5eb852650f6a6be4e6" target="_blank" rel="noopener" class="text-[11px] font-semibold text-[#ff9f0a] active:opacity-70 flex items-center gap-1">
+          <div class="pt-2.5 border-t border-[#1c1c1e]/70 flex justify-between items-center">
+            <span class="text-xs text-[#aeaeb2]">1x auf dem iPhone nötig:</span>
+            <a href="https://www.icloud.com/shortcuts/1d92994ae7364b5eb852650f6a6be4e6" target="_blank" rel="noopener" class="text-xs font-bold text-[#ff9f0a] active:opacity-70 flex items-center gap-1">
               <span>Kurzbefehl laden</span>
               <span>→</span>
             </a>
@@ -305,7 +305,7 @@
         
         <button 
           onclick="closeEditStartModal()" 
-          class="w-full py-3.5 rounded-xl bg-[#2c2c2e] border border-[#3a3a3c] text-white font-bold btn-press">
+          class="w-full py-4 rounded-xl bg-[#2c2c2e] border border-[#3a3a3c] text-white font-bold text-base btn-press">
           Fertig
         </button>
       </div>
@@ -317,7 +317,7 @@
     <div class="bg-[#1c1c1e] border-t sm:border border-[#2c2c2e] rounded-t-3xl sm:rounded-3xl w-full max-w-md p-6 max-h-[85vh] flex flex-col">
       <div class="flex justify-between items-center mb-4">
         <h2 class="text-xl font-bold text-white">Vergangene 16:8 Fasten</h2>
-        <button onclick="closeHistoryModal()" class="w-8 h-8 rounded-full bg-[#2c2c2e] text-[#8e8e93] flex items-center justify-center">
+        <button onclick="closeHistoryModal()" class="w-9 h-9 rounded-full bg-[#2c2c2e] text-[#aeaeb2] flex items-center justify-center">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
@@ -328,7 +328,7 @@
 
       <button 
         onclick="clearHistory()" 
-        class="mt-4 py-2.5 text-xs text-red-400 text-center font-medium opacity-80 active:opacity-100">
+        class="mt-4 py-3 text-sm text-red-400 text-center font-semibold opacity-90 active:opacity-100">
         Verlauf löschen
       </button>
     </div>
@@ -455,12 +455,12 @@
 
       if (!state.isFasting || !state.startTime) {
         stateBadge.textContent = "Essensfenster";
-        stateBadge.className = "text-xs px-2.5 py-0.5 rounded-full font-semibold bg-[#2c2c2e] text-[#8e8e93]";
+        stateBadge.className = "text-xs px-3 py-1 rounded-full font-semibold bg-[#2c2c2e] text-[#aeaeb2]";
         
         timerSubLabel.textContent = "Verbleibende Zeit";
         mainTimeDisplay.textContent = "16:00:00";
         ringPercentBadge.textContent = "0%";
-        ringPercentBadge.className = "mt-2.5 text-xs font-bold px-2.5 py-0.5 rounded-full bg-[#2c2c2e] text-[#8e8e93]";
+        ringPercentBadge.className = "mt-2.5 text-xs font-bold px-3 py-0.5 rounded-full bg-[#2c2c2e] text-[#aeaeb2]";
 
         startTimeLabel.textContent = "--:--";
         endTimeLabel.textContent = "--:--";
@@ -479,13 +479,13 @@
         stageTitle.textContent = "Essensfenster";
         stageRange.textContent = "Pause";
         stageDescription.textContent = "Aktuell läuft kein Timer. Nimm deine Mahlzeiten ein und starte das Fasten nach dem letzten Essen.";
-        stageIndicatorDot.style.backgroundColor = '#8e8e93';
+        stageIndicatorDot.style.backgroundColor = '#aeaeb2';
         stageIndicatorDot.classList.remove('animate-pulse');
         return;
       }
 
       stateBadge.textContent = "Fasten aktiv";
-      stateBadge.className = "text-xs px-2.5 py-0.5 rounded-full font-semibold bg-[#ff9f0a]/20 text-[#ff9f0a]";
+      stateBadge.className = "text-xs px-3 py-1 rounded-full font-semibold bg-[#ff9f0a]/20 text-[#ff9f0a]";
 
       const start = new Date(state.startTime);
       const now = new Date();
@@ -508,13 +508,13 @@
         timerSubLabel.textContent = "Verbleibende Zeit";
         mainTimeDisplay.textContent = formatMs(remainingMs);
         progressCircle.setAttribute('stroke', '#ff9f0a');
-        ringPercentBadge.className = "mt-2.5 text-xs font-bold px-2.5 py-0.5 rounded-full bg-[#ff9f0a]/20 text-[#ff9f0a]";
+        ringPercentBadge.className = "mt-2.5 text-xs font-bold px-3 py-0.5 rounded-full bg-[#ff9f0a]/20 text-[#ff9f0a]";
       } else {
         const overtimeMs = now - targetEnd;
         timerSubLabel.textContent = "Ziel erreicht (+)";
         mainTimeDisplay.textContent = `+${formatMs(overtimeMs)}`;
         progressCircle.setAttribute('stroke', '#30d158');
-        ringPercentBadge.className = "mt-2.5 text-xs font-bold px-2.5 py-0.5 rounded-full bg-[#30d158]/20 text-[#30d158]";
+        ringPercentBadge.className = "mt-2.5 text-xs font-bold px-3 py-0.5 rounded-full bg-[#30d158]/20 text-[#30d158]";
       }
 
       if (lastRenderedFastingState !== true) {
@@ -592,7 +592,6 @@
       document.getElementById('editStartModal').classList.add('hidden');
     }
 
-    // Greift jetzt automatisch, sobald man eine andere Uhrzeit im Feld auswählt
     function applyCustomStartTime(val) {
       if (val) {
         state.startTime = (new Date(val)).toISOString();
@@ -616,9 +615,9 @@
       const container = document.getElementById('historyListContainer');
       if (state.history.length === 0) {
         container.innerHTML = `
-          <div class="text-center py-10 text-[#8e8e93]">
-            <i data-lucide="calendar" class="w-8 h-8 mx-auto mb-2 opacity-40"></i>
-            <p class="text-xs">Noch keine 16:8 Fastenzeiten aufgezeichnet.</p>
+          <div class="text-center py-12 text-[#aeaeb2]">
+            <i data-lucide="calendar" class="w-10 h-10 mx-auto mb-2.5 opacity-50"></i>
+            <p class="text-sm">Noch keine 16:8 Fastenzeiten aufgezeichnet.</p>
           </div>
         `;
         lucide.createIcons();
@@ -627,22 +626,22 @@
 
       container.innerHTML = state.history.map(item => {
         const dateStr = new Date(item.end).toLocaleDateString('de-DE', { day: '2-digit', month: 'short' });
-        const weightDisplay = item.weight ? `<div class="text-xs text-[#ff9f0a] font-medium mt-0.5"><i data-lucide="scale" class="w-3 h-3 inline mr-1"></i>${item.weight} kg</div>` : '';
+        const weightDisplay = item.weight ? `<div class="text-xs text-[#ff9f0a] font-semibold mt-1"><i data-lucide="scale" class="w-3.5 h-3.5 inline mr-1"></i>${item.weight} kg</div>` : '';
         
         return `
-          <div class="bg-[#2c2c2e]/60 p-3.5 rounded-xl border border-[#3a3a3c]/60 flex items-center justify-between">
+          <div class="bg-[#2c2c2e]/60 p-4 rounded-xl border border-[#3a3a3c]/60 flex items-center justify-between">
             <div>
               <div class="flex items-center gap-2">
-                <span class="text-sm font-semibold text-white">16:8 Fasten</span>
-                <span class="text-[10px] px-1.5 py-0.5 rounded font-bold ${item.success ? 'bg-[#30d158]/20 text-[#30d158]' : 'bg-[#ff9f0a]/20 text-[#ff9f0a]'}">
+                <span class="text-base font-bold text-white">16:8 Fasten</span>
+                <span class="text-xs px-2 py-0.5 rounded font-bold ${item.success ? 'bg-[#30d158]/20 text-[#30d158]' : 'bg-[#ff9f0a]/20 text-[#ff9f0a]'}">
                   ${item.success ? 'Ziel erreicht' : 'Vorzeitig beendet'}
                 </span>
               </div>
-              <span class="text-xs text-[#8e8e93]">${dateStr}</span>
+              <span class="text-xs text-[#aeaeb2] mt-0.5 block">${dateStr}</span>
               ${weightDisplay}
             </div>
             <div class="text-right">
-              <span class="text-base font-bold font-mono text-white">${item.durationHours}h</span>
+              <span class="text-lg font-bold font-mono text-white">${item.durationHours}h</span>
             </div>
           </div>
         `;
