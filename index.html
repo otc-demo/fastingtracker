@@ -472,6 +472,7 @@
         state.startTime = (new Date()).toISOString();
         saveState();
         updateUI();
+        triggeriOSTimer(); // <-- NEU
       } else {
         finishFasting();
       }
