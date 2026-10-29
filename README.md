@@ -20,7 +20,7 @@ Eine minimalistische, datenschutzfreundliche Progressive Web App (PWA) für das 
 
 ## 📱 Installation als App auf dem iPhone (Homescreen)
 
-1. Öffne [https://otc-demo.github.io/fastingtracker/](https://otc-demo.github.io/fastingtracker/) in **Safari** auf dem iPhone.
+1. Öffne den Link in **Safari** auf dem iPhone.
 2. Tippe unten in der Leiste auf das **Teilen-Symbol** (Quadrat mit Pfeil nach oben).
 3. Wähle **„Zum Home-Bildschirm“** aus und bestätige oben rechts mit **„Hinzufügen“**.
 4. Die App startet nun vom Homescreen im Vollbildmodus ohne Browser-Leisten wie eine native App.
