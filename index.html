@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Meine App</title>
+
+  <!-- iOS Webclip / PWA Tags -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Meine App">
+  <link rel="apple-touch-icon" href="icon.png">
+  <link rel="manifest" href="manifest.json">
+
+  <style>
+    :root {
+      --bg: #121212;
+      --card-bg: #1e1e1e;
+      --text: #f0f0f0;
+      --accent: #007aff;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    header {
+      padding: 16px 20px;
+      font-size: 20px;
+      font-weight: 700;
+      border-bottom: 1px solid #2c2c2e;
+    }
+
+    main {
+      padding: 20px;
+      flex: 1;
+    }
+
+    .card {
+      background: var(--card-bg);
+      padding: 16px;
+      border-radius: 14px;
+      margin-bottom: 16px;
+      border: 1px solid #2a2a2a;
+    }
+
+    button {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 20px;
+      font-size: 16px;
+      font-weight: 600;
+      width: 100%;
+      cursor: pointer;
+    }
+
+    button:active {
+      opacity: 0.8;
+    }
+  </style>
+</head>
+<body>
+
+  <header>Meine Mini-App</header>
+
+  <main>
+    <div class="card">
+      <p>App läuft als native Web-App ohne Safari-Rahmen.</p>
+      <button id="counterBtn">Klicks: 0</button>
+    </div>
+  </main>
+
+  <script>
+    const btn = document.getElementById('counterBtn');
+    let count = parseInt(localStorage.getItem('app_klicks') || '0', 10);
+    btn.textContent = `Klicks: ${count}`;
+
+    btn.addEventListener('click', () => {
+      count++;
+      btn.textContent = `Klicks: ${count}`;
+      localStorage.setItem('app_klicks', count);
+    });
+  </script>
+</body>
+</html>
