@@ -124,16 +124,16 @@
         />
       </svg>
 
-      <!-- Zentrierte Zeitanzeige -->
+      <!-- Zentrierte Zeitanzeige direkt im Ring -->
       <div class="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
         <span id="timerSubLabel" class="text-xs font-semibold uppercase tracking-wider text-[#8e8e93] mb-1">
-          Bereit
+          Verbleibend
         </span>
         <div id="mainTimeDisplay" class="text-4xl sm:text-5xl font-extrabold tracking-tight tabular-nums font-mono text-white">
           16:00:00
         </div>
         <span id="elapsedDisplay" class="text-xs text-[#8e8e93] mt-1.5 font-medium">
-          Ziel: 16 Stunden
+          Gefastet: 0 Std. 0 Min.
         </span>
         <div id="ringPercentBadge" class="mt-2 text-xs font-bold px-2.5 py-0.5 rounded-full bg-[#2c2c2e] text-[#8e8e93]">
           0%
@@ -312,7 +312,7 @@
         stateBadge.textContent = "Essensfenster (8h)";
         stateBadge.className = "text-xs px-2.5 py-0.5 rounded-full font-semibold bg-[#2c2c2e] text-[#8e8e93]";
         
-        timerSubLabel.textContent = "Bereit für 16:8";
+        timerSubLabel.textContent = "Verbleibend";
         mainTimeDisplay.textContent = "16:00:00";
         elapsedDisplay.textContent = "Ziel: 16 Stunden Fasten";
         ringPercentBadge.textContent = "0%";
@@ -361,7 +361,7 @@
       ringPercentBadge.textContent = `${percent}%`;
 
       if (remainingMs > 0) {
-        // Fasten läuft noch
+        // Fasten läuft noch: Verbleibende Zeit im Ring
         timerSubLabel.textContent = "Verbleibende Zeit";
         mainTimeDisplay.textContent = formatMs(remainingMs);
         elapsedDisplay.textContent = `Gefastet: ${formatHoursMinutes(elapsedMs)}`;
@@ -370,9 +370,9 @@
       } else {
         // 16 Stunden geschafft (+ Überhang)
         const overtimeMs = now - targetEnd;
-        timerSubLabel.textContent = "Ziel erreicht! (+ Überzeit)";
+        timerSubLabel.textContent = "Überzeit (+)";
         mainTimeDisplay.textContent = `+${formatMs(overtimeMs)}`;
-        elapsedDisplay.textContent = `Gesamt gefastet: ${formatHoursMinutes(elapsedMs)}`;
+        elapsedDisplay.textContent = `Gefastet: ${formatHoursMinutes(elapsedMs)}`;
         progressCircle.setAttribute('stroke', '#30d158');
         ringPercentBadge.className = "mt-2 text-xs font-bold px-2.5 py-0.5 rounded-full bg-[#30d158]/20 text-[#30d158]";
       }
