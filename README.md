@@ -4,8 +4,6 @@
 
 Eine minimalistische, datenschutzfreundliche Progressive Web App (PWA) für das **16:8 Intervallfasten** im nativen iOS-Dark-Mode-Design (Apple Watch / Health Look).
 
-🔗 **Live-App:** [https://otc-demo.github.io/fastingtracker/](https://otc-demo.github.io/fastingtracker/)
-
 ---
 
 ## ✨ Features
