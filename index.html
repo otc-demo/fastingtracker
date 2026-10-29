@@ -362,7 +362,11 @@
         window.location.href = `shortcuts://run-shortcut?name=Fasten&input=text&text=${remainingSeconds}`;
       }
     }
-
+    // GENAU HIER DARUNTER fügst du canceliOSTimer ein:
+    function canceliOSTimer() {
+      if (!state.notifyEnabled) return;
+      window.location.href = `shortcuts://run-shortcut?name=Fasten&input=text&text=0`;
+    }
     function updateDateDisplay() {
       const d = new Date();
       const options = { weekday: 'short', day: 'numeric', month: 'short' };
