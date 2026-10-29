@@ -504,6 +504,7 @@
       const tzOffset = now.getTimezoneOffset() * 60000;
       const localISOTime = (new Date(now.getTime() - tzOffset)).toISOString().slice(0, 16);
       input.value = localISOTime;
+      document.getElementById('notifyToggleInput').checked = !!state.notifyEnabled;
       document.getElementById('editStartModal').classList.remove('hidden');
     }
 
