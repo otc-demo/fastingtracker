@@ -9,6 +9,7 @@
 
   <!-- iOS PWA / Webclip Tags für den Homescreen -->
   <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Fasten">
   <meta name="theme-color" content="#000000">
@@ -44,7 +45,7 @@
       padding-bottom: max(env(safe-area-inset-bottom), 24px);
       padding-left: max(env(safe-area-inset-left), 18px);
       padding-right: max(env(safe-area-inset-right), 18px);
-      min-height: 100vh;
+      min-height: 100dvh;
       user-select: none;
       -webkit-user-select: none;
       overflow-x: hidden;
@@ -93,7 +94,8 @@
       transform: scale(0.97);
       opacity: 0.9;
     }
-    /* AB HIER EINFÜGEN: Fix für das datetime-input auf Mobilgeräten */
+
+    /* Fix für das datetime-input auf Mobilgeräten */
     #customStartTimeInput {
       width: 100% !important;
       max-width: 100% !important;
@@ -114,7 +116,7 @@
     }
   </style>
 </head>
-<body class="flex flex-col justify-between max-w-md mx-auto min-h-screen">
+<body class="flex flex-col justify-between max-w-md mx-auto min-h-[100dvh]">
 
   <!-- HEADER -->
   <header class="flex justify-between items-center py-2">
@@ -215,12 +217,13 @@
         <span id="weightStatusBadge" class="text-xs text-[#aeaeb2]">Optional</span>
       </div>
       <div class="flex gap-2">
+        <!-- Fix: text-base (16px) verhindert iOS Auto-Zoom, inputmode="decimal" für Komma-Tastatur -->
         <input 
-          type="number" 
-          step="0.1" 
+          type="text" 
+          inputmode="decimal" 
           id="weightInput" 
-          placeholder="z. B. 78.5" 
-          class="flex-1 bg-[#2c2c2e] text-white px-4 py-2.5 rounded-xl border border-[#3a3a3c] text-sm font-medium focus:outline-none focus:border-[#ff9f0a]"
+          placeholder="z. B. 78,5" 
+          class="flex-1 bg-[#2c2c2e] text-white px-4 py-2.5 rounded-xl border border-[#3a3a3c] text-base font-medium focus:outline-none focus:border-[#ff9f0a]"
         >
         <button 
           onclick="saveCurrentWeight()" 
@@ -255,23 +258,22 @@
 
   <!-- MODAL: EINSTELLUNGEN & STARTZEIT -->
   <div id="editStartModal" class="fixed inset-0 bg-black/75 ios-blur z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="bg-[#1c1c1e] border-t sm:border border-[#2c2c2e] rounded-t-3xl sm:rounded-3xl w-full max-w-md p-6 max-h-[90vh] overflow-y-auto no-scrollbar">
+    <div class="bg-[#1c1c1e] border-t sm:border border-[#2c2c2e] rounded-t-3xl sm:rounded-3xl w-full max-w-md p-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] max-h-[90dvh] overflow-y-auto no-scrollbar">
       <div class="flex justify-between items-center mb-4">
         <h2 class="text-xl font-bold text-white">Einstellungen</h2>
-        <button onclick="closeEditStartModal()" class="w-9 h-9 rounded-full bg-[#2c2c2e] text-[#aeaeb2] flex items-center justify-center">
+        <button onclick="cancelEditStartModal()" class="w-9 h-9 rounded-full bg-[#2c2c2e] text-[#aeaeb2] flex items-center justify-center">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
 
       <div class="space-y-4">
-        <!-- Startzeit nachträglich anpassen -->
+        <!-- Startzeit nachträglich anpassen (ohne direktes onchange beim Scrollen) -->
         <div class="bg-[#2c2c2e] p-3.5 rounded-xl border border-[#3a3a3c] space-y-2">
           <div class="text-sm font-semibold text-white">Startzeit anpassen</div>
-          <div class="text-[11px] text-[#8e8e93]">Falls du den Start verpasst hast oder vordatieren möchtest:</div>
+          <div class="text-[11px] text-[#8e8e93]">Falls du den Start verpasst hast oder rückdatieren möchtest (wird mit „Fertig“ übernommen):</div>
           <input 
             type="datetime-local" 
             id="customStartTimeInput" 
-            onchange="applyCustomStartTime(this.value)"
             class="w-full bg-[#1c1c1e] text-white p-3 rounded-xl border border-[#3a3a3c] text-center text-base font-medium focus:outline-none focus:border-[#ff9f0a]"
           >
         </div>
@@ -310,7 +312,7 @@
         </div>
         
         <button 
-          onclick="closeEditStartModal()" 
+          onclick="saveAndCloseEditStartModal()" 
           class="w-full py-4 rounded-xl bg-[#2c2c2e] border border-[#3a3a3c] text-white font-bold text-base btn-press">
           Fertig
         </button>
@@ -320,7 +322,7 @@
 
   <!-- MODAL: HISTORIE -->
   <div id="historyModal" class="fixed inset-0 bg-black/75 ios-blur z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="bg-[#1c1c1e] border-t sm:border border-[#2c2c2e] rounded-t-3xl sm:rounded-3xl w-full max-w-md p-6 max-h-[85vh] flex flex-col">
+    <div class="bg-[#1c1c1e] border-t sm:border border-[#2c2c2e] rounded-t-3xl sm:rounded-3xl w-full max-w-md p-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] max-h-[85dvh] flex flex-col">
       <div class="flex justify-between items-center mb-4">
         <h2 class="text-xl font-bold text-white">Vergangene 16:8 Fasten</h2>
         <button onclick="closeHistoryModal()" class="w-9 h-9 rounded-full bg-[#2c2c2e] text-[#aeaeb2] flex items-center justify-center">
@@ -387,6 +389,14 @@
       updateUI();
       setInterval(updateUI, 1000);
       lucide.createIcons();
+
+      // Aktualisiert Datum & Timer sofort, wenn die PWA aus dem iOS-Hintergrund geholt wird
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) {
+          updateDateDisplay();
+          updateUI();
+        }
+      });
     }
 
     function loadState() {
@@ -415,10 +425,20 @@
       updateUI();
     }
 
+    function normalizeWeightValue(raw) {
+      if (!raw) return '';
+      // Ersetzt deutsches Komma durch Punkt für saubere Formatierung
+      const cleaned = raw.trim().replace(',', '.');
+      const parsed = parseFloat(cleaned);
+      return !isNaN(parsed) && parsed > 0 ? parsed.toFixed(1).replace('.0', '') : '';
+    }
+
     function saveCurrentWeight() {
-      const val = weightInput.value.trim();
+      const val = normalizeWeightValue(weightInput.value);
       if (val) {
         state.currentWeight = val;
+        weightInput.value = val;
+        weightInput.blur(); // Schließt die iOS-Tastatur nach dem Speichern
         saveState();
         document.getElementById('weightStatusBadge').textContent = "Gespeichert ✓";
         setTimeout(() => {
@@ -452,7 +472,7 @@
     function updateUI() {
       if (!state.isFasting && state.weightTrackingEnabled) {
         weightContainer.classList.remove('hidden');
-        if (state.currentWeight && weightInput.value === '') {
+        if (state.currentWeight && document.activeElement !== weightInput && weightInput.value === '') {
           weightInput.value = state.currentWeight;
         }
       } else {
@@ -507,7 +527,7 @@
       const offset = CIRCUMFERENCE - (ratio * CIRCUMFERENCE);
       progressCircle.style.strokeDashoffset = offset;
 
-      const percent = Math.floor((elapsedMs / TARGET_MS) * 100);
+      const percent = Math.max(0, Math.floor((elapsedMs / TARGET_MS) * 100));
       ringPercentBadge.textContent = `${percent}%`;
 
       if (remainingMs > 0) {
@@ -549,6 +569,11 @@
 
     function handleMainAction() {
       if (!state.isFasting) {
+        // Falls Gewicht eingetippt, aber noch nicht auf "Speichern" gedrückt wurde, automatisch übernehmen
+        if (state.weightTrackingEnabled && weightInput.value.trim() !== '') {
+          const autoSavedWeight = normalizeWeightValue(weightInput.value);
+          if (autoSavedWeight) state.currentWeight = autoSavedWeight;
+        }
         state.isFasting = true;
         state.startTime = (new Date()).toISOString();
         saveState();
@@ -562,15 +587,17 @@
     function finishFasting() {
       const start = new Date(state.startTime);
       const end = new Date();
-      const durationMs = end - start;
+      const durationMs = Math.max(0, end - start);
       const durationHours = (durationMs / (1000 * 60 * 60)).toFixed(1);
+
+      const finalWeight = state.currentWeight || normalizeWeightValue(weightInput.value);
 
       state.history.unshift({
         id: Date.now(),
         end: end.toISOString(),
         durationHours: durationHours,
         success: (durationMs / (1000 * 60 * 60)) >= FAST_HOURS,
-        weight: state.weightTrackingEnabled ? state.currentWeight : null
+        weight: state.weightTrackingEnabled && finalWeight ? finalWeight : null
       });
 
       state.isFasting = false;
@@ -583,24 +610,44 @@
       canceliOSTimer();
     }
 
+    function toLocalISOString(dateObj) {
+      const tzOffset = dateObj.getTimezoneOffset() * 60000;
+      return (new Date(dateObj.getTime() - tzOffset)).toISOString().slice(0, 16);
+    }
+
     function openEditStartModal() {
       const input = document.getElementById('customStartTimeInput');
-      const now = state.startTime ? new Date(state.startTime) : new Date();
-      const tzOffset = now.getTimezoneOffset() * 60000;
-      const localISOTime = (new Date(now.getTime() - tzOffset)).toISOString().slice(0, 16);
+      const now = new Date();
+      const currentStart = state.startTime ? new Date(state.startTime) : now;
+      
+      const localISOTime = toLocalISOString(currentStart);
+      input.max = toLocalISOString(now); // Verhindert versehentliche Startzeiten in der Zukunft
       input.value = localISOTime;
+      input.dataset.initialValue = localISOTime;
+
       document.getElementById('notifyToggleInput').checked = !!state.notifyEnabled;
       document.getElementById('weightTrackingToggleInput').checked = !!state.weightTrackingEnabled;
       document.getElementById('editStartModal').classList.remove('hidden');
     }
 
-    function closeEditStartModal() {
+    function cancelEditStartModal() {
+      document.getElementById('editStartModal').classList.add('hidden');
+    }
+
+    function saveAndCloseEditStartModal() {
+      const input = document.getElementById('customStartTimeInput');
+      if (input.value && input.value !== input.dataset.initialValue) {
+        applyCustomStartTime(input.value);
+      }
       document.getElementById('editStartModal').classList.add('hidden');
     }
 
     function applyCustomStartTime(val) {
       if (val) {
-        state.startTime = (new Date(val)).toISOString();
+        const selectedDate = new Date(val);
+        const now = new Date();
+        // Sicherheits-Check: Nicht in die Zukunft datieren
+        state.startTime = (selectedDate > now ? now : selectedDate).toISOString();
         state.isFasting = true;
         saveState();
         updateUI();
@@ -656,9 +703,11 @@
     }
 
     function clearHistory() {
-      state.history = [];
-      saveState();
-      renderHistoryList();
+      if (state.history.length > 0 && confirm('Möchtest du den gesamten Fasten-Verlauf wirklich unwiderruflich löschen?')) {
+        state.history = [];
+        saveState();
+        renderHistoryList();
+      }
     }
 
     function formatMs(ms) {
