@@ -345,6 +345,23 @@
     function saveState() {
       localStorage.setItem('fasting_16_8_state', JSON.stringify(state));
     }
+    // NEU: Speichert die Slider-Einstellung sofort beim Umschalten
+    function toggleNotifications(enabled) {
+      state.notifyEnabled = enabled;
+      saveState();
+    }
+
+    // NEU: Löst den iOS-Kurzbefehl nur aus, wenn der Slider aktiv ist
+    function triggeriOSTimer() {
+      if (!state.notifyEnabled || !state.startTime) return;
+      const start = new Date(state.startTime);
+      const targetEnd = new Date(start.getTime() + TARGET_MS);
+      const remainingSeconds = Math.floor((targetEnd - new Date()) / 1000);
+
+      if (remainingSeconds > 0) {
+        window.location.href = `shortcuts://run-shortcut?name=Fasten&input=text&text=${remainingSeconds}`;
+      }
+    }
 
     function updateDateDisplay() {
       const d = new Date();
