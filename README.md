@@ -36,7 +36,7 @@ Die App startet nun vom Homescreen im Vollbildmodus ohne Browser-Leisten wie ein
 
 Tippe in der Fasten-App unten rechts auf das Uhr-Symbol (Startzeit anpassen & Einstellungen).
 
-Aktiviere den Schalter „Gewichts-Tracking“ (wird im Gerät gespeichert).
+Aktiviere den Schalter „Gewichts-Tracking“ (wird direkt im Gerät gespeichert).
 
 Im Essensfenster (wenn kein aktives Fasten läuft) erscheint nun ein dezentes Eingabefeld, in dem du dein heutiges Gewicht eintragen und speichern kannst.
 
@@ -44,25 +44,11 @@ Das Gewicht wird automatisch mit in deiner Fasten-Historie abgespeichert und dor
 
 🔔 Optionale iOS-Benachrichtigung einrichten (iPhone-Timer)
 
-Da iOS Hintergrund-Timer in reinen Web-Apps ohne externen Push-Server pausiert, nutzt diese App auf Wunsch eine direkte Schnittstelle zur nativen Apple Kurzbefehle-App (Shortcuts). Das Feature ist standardmäßig deaktiviert und kann von jedem Nutzer selbst eingeschaltet werden.
+Da iOS Hintergrund-Timer in reinen Web-Apps ohne externen Push-Server pausiert, nutzt diese App eine direkte Schnittstelle zur nativen Apple Kurzbefehle-App (Shortcuts).
 
-1. Einmalig den Kurzbefehl auf dem iPhone anlegen
+1. Einmalig den Kurzbefehl importieren
 
-Öffne auf dem iPhone die vorinstallierte App Kurzbefehle und tippe oben rechts auf +.
-
-Benenne den Kurzbefehl ganz oben exakt in Fasten um (Groß-/Kleinschreibung beachten).
-
-Tippe auf „Aktion hinzufügen“, suche nach „Timer starten“ und wähle die Aktion aus.
-
-Passe die Zeile „Timer starten für [Dauer] [Minuten]“ wie folgt an:
-
-Stelle die Einheit von Minuten auf Sekunden um.
-
-Halte den Finger auf das Feld [Dauer] gedrückt und wähle „Kurzbefehl-Eingabe“ aus.
-
-(Optional) Füge darunter als zweite Aktion „Zum Home-Bildschirm“ hinzu, damit nach dem Starten des Timers sofort wieder der Homescreen bzw. die App im Vordergrund ist.
-
-Tippe oben rechts auf „Fertig“.
+Tippe in den App-Einstellungen auf den Link „Kurzbefehl laden“ und lade diesen direkt auf dein iPhone (benötigt einmalig die Kurzbefehle-App).
 
 2. Funktion in der Fasten-App aktivieren
 
