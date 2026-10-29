@@ -47,6 +47,38 @@
       overflow-x: hidden;
     }
 
+    /* Feste Positionierung für den Ring und den Text exakt in der Kreismitte */
+    .ring-wrapper {
+      position: relative;
+      width: 19rem;
+      height: 19rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
+    }
+
+    .ring-svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .ring-center-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      pointer-events: none;
+      padding: 1.5rem;
+    }
+
     /* Kreis-Animation */
     .progress-ring__circle {
       transition: stroke-dashoffset 0.85s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.4s ease;
@@ -81,8 +113,8 @@
       <span class="text-xs uppercase tracking-wider text-[#8e8e93] font-semibold" id="currentDateDisplay">HEUTE</span>
       <h1 class="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
         16:8 Fasten
-        <span id="stateBadge" class="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-[#ff9f0a]/20 text-[#ff9f0a]">
-          Fastenfenster
+        <span id="stateBadge" class="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-[#2c2c2e] text-[#8e8e93]">
+          Essensfenster
         </span>
       </h1>
     </div>
@@ -95,16 +127,16 @@
   <!-- HAUPTINHALT / TIMER RING -->
   <main class="flex-1 flex flex-col items-center justify-center my-3">
     
-    <!-- Apple Watch / Health Fortschritts-Ring -->
-    <div class="relative w-72 h-72 sm:w-80 sm:h-80 flex items-center justify-center">
-      <svg class="w-full h-full transform" viewBox="0 0 240 240">
+    <!-- Fortschritts-Ring mit Text ausschließlich in der Mitte des Kreises -->
+    <div class="ring-wrapper">
+      <svg class="ring-svg" viewBox="0 0 240 240">
         <!-- Hintergrundkreis -->
         <circle
           cx="120"
           cy="120"
           r="100"
           stroke="#2c2c2e"
-          stroke-width="15"
+          stroke-width="16"
           fill="transparent"
           stroke-linecap="round"
         />
@@ -116,7 +148,7 @@
           cy="120"
           r="100"
           stroke="#ff9f0a"
-          stroke-width="15"
+          stroke-width="16"
           fill="transparent"
           stroke-linecap="round"
           stroke-dasharray="628.318"
@@ -124,31 +156,28 @@
         />
       </svg>
 
-      <!-- Zentrierte Zeitanzeige direkt im Ring -->
-      <div class="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
-        <span id="timerSubLabel" class="text-xs font-semibold uppercase tracking-wider text-[#8e8e93] mb-1">
-          Verbleibend
+      <!-- Zentrierte Zeitanzeige direkt IM Ring -->
+      <div class="ring-center-overlay">
+        <span id="timerSubLabel" class="text-[11px] font-semibold uppercase tracking-widest text-[#8e8e93] mb-1">
+          Verbleibende Zeit
         </span>
-        <div id="mainTimeDisplay" class="text-4xl sm:text-5xl font-extrabold tracking-tight tabular-nums font-mono text-white">
+        <div id="mainTimeDisplay" class="text-4xl font-extrabold tracking-tight tabular-nums font-mono text-white">
           16:00:00
         </div>
-        <span id="elapsedDisplay" class="text-xs text-[#8e8e93] mt-1.5 font-medium">
-          Gefastet: 0 Std. 0 Min.
-        </span>
-        <div id="ringPercentBadge" class="mt-2 text-xs font-bold px-2.5 py-0.5 rounded-full bg-[#2c2c2e] text-[#8e8e93]">
+        <div id="ringPercentBadge" class="mt-2.5 text-xs font-bold px-2.5 py-0.5 rounded-full bg-[#2c2c2e] text-[#8e8e93]">
           0%
         </div>
       </div>
     </div>
 
-    <!-- Start & Ziel Zeit-Karten -->
-    <div class="w-full grid grid-cols-2 gap-3 mt-4">
+    <!-- Start & Ziel Uhrzeit-Karten (ohne doppelte Restzeit-Anzeige) -->
+    <div class="w-full grid grid-cols-2 gap-3 mt-5">
       <div class="bg-[#1c1c1e] p-3.5 rounded-2xl border border-[#2c2c2e]/70 flex flex-col items-center justify-center">
-        <span class="text-[11px] text-[#8e8e93] uppercase font-semibold tracking-wider">Startzeit</span>
+        <span class="text-[11px] text-[#8e8e93] uppercase font-semibold tracking-wider">Beginn</span>
         <span id="startTimeLabel" class="text-base font-semibold text-white mt-0.5">--:--</span>
       </div>
       <div class="bg-[#1c1c1e] p-3.5 rounded-2xl border border-[#2c2c2e]/70 flex flex-col items-center justify-center">
-        <span class="text-[11px] text-[#8e8e93] uppercase font-semibold tracking-wider">Fastenende (16h)</span>
+        <span class="text-[11px] text-[#8e8e93] uppercase font-semibold tracking-wider">Ziel-Uhrzeit</span>
         <span id="endTimeLabel" class="text-base font-semibold text-white mt-0.5">--:--</span>
       </div>
     </div>
@@ -158,7 +187,7 @@
       <div class="flex items-center justify-between mb-1.5">
         <div class="flex items-center gap-2">
           <div id="stageIndicatorDot" class="w-2.5 h-2.5 rounded-full bg-[#8e8e93]"></div>
-          <span id="stageTitle" class="text-sm font-semibold text-white">Essensfenster (8h)</span>
+          <span id="stageTitle" class="text-sm font-semibold text-white">Essensfenster</span>
         </div>
         <span id="stageRange" class="text-xs text-[#8e8e93] font-mono">Pause</span>
       </div>
@@ -176,7 +205,7 @@
         id="mainActionButton" 
         onclick="handleMainAction()"
         class="flex-1 py-4 px-6 rounded-2xl font-bold text-base flex items-center justify-center gap-2 transition duration-200 btn-press shadow-lg shadow-[#ff9f0a]/10 bg-[#ff9f0a] text-black">
-        <i data-lucide="play" class="w-5 h-5 fill-current"></i>
+        <span id="actionButtonIcon" class="flex items-center"><i data-lucide="play" class="w-5 h-5 fill-current"></i></span>
         <span id="actionButtonText">Fasten beginnen</span>
       </button>
 
@@ -242,17 +271,16 @@
 
   <script>
     const FAST_HOURS = 16;
-    const EAT_HOURS = 8;
     const TARGET_MS = FAST_HOURS * 3600 * 1000;
     const CIRCLE_RADIUS = 100;
     const CIRCUMFERENCE = 2 * Math.PI * CIRCLE_RADIUS;
 
     // Spezifische 16:8 Stoffwechselstufen
     const PHASES = [
-      { maxHours: 4, title: 'Blutzuckerspiegel fällt', range: '0 - 4 Std.', desc: 'Der Insulinspiegel sinkt rapide. Magen und Verdauungstrakt kommen zur Ruhe.', color: '#30d158' },
-      { maxHours: 12, title: 'Glykogenspeicher leeren sich', range: '4 - 12 Std.', desc: 'Die Energie aus der letzten Mahlzeit ist aufgebraucht. Der Körper bereitet die Fettverbrennung vor.', color: '#ff9f0a' },
-      { maxHours: 16, title: 'Fettverbrennung & Ketose', range: '12 - 16 Std.', desc: 'Fettsäuren werden in Ketonkörper umgewandelt. Mentale Frische und aktive Fettverbrennung.', color: '#ff375f' },
-      { maxHours: 999, title: 'Ziel erreicht (16h+)', range: '16+ Std.', desc: 'Perfektes 16-Stunden-Fenster abgeschlossen! Die zelluläre Selbstreinigung (Autophagie) beginnt.', color: '#bf5af2' }
+      { maxHours: 4, title: 'Blutzuckerspiegel fällt', range: 'Phase 1', desc: 'Der Insulinspiegel sinkt rapide. Magen und Verdauungstrakt kommen zur Ruhe.', color: '#30d158' },
+      { maxHours: 12, title: 'Glykogenspeicher leeren sich', range: 'Phase 2', desc: 'Die Energie aus der letzten Mahlzeit ist aufgebraucht. Der Körper bereitet die Fettverbrennung vor.', color: '#ff9f0a' },
+      { maxHours: 16, title: 'Fettverbrennung & Ketose', range: 'Phase 3', desc: 'Fettsäuren werden in Ketonkörper umgewandelt. Mentale Frische und aktive Fettverbrennung.', color: '#ff375f' },
+      { maxHours: 999, title: 'Ziel erreicht', range: 'Autophagie', desc: 'Perfektes 16-Stunden-Fenster abgeschlossen! Die zelluläre Selbstreinigung (Autophagie) beginnt.', color: '#bf5af2' }
     ];
 
     let state = {
@@ -261,16 +289,18 @@
       history: []
     };
 
+    let lastRenderedFastingState = null;
+
     // DOM-Elemente
     const progressCircle = document.getElementById('progressCircle');
     const mainTimeDisplay = document.getElementById('mainTimeDisplay');
     const timerSubLabel = document.getElementById('timerSubLabel');
-    const elapsedDisplay = document.getElementById('elapsedDisplay');
     const ringPercentBadge = document.getElementById('ringPercentBadge');
     const startTimeLabel = document.getElementById('startTimeLabel');
     const endTimeLabel = document.getElementById('endTimeLabel');
     const mainActionButton = document.getElementById('mainActionButton');
     const actionButtonText = document.getElementById('actionButtonText');
+    const actionButtonIcon = document.getElementById('actionButtonIcon');
     const stateBadge = document.getElementById('stateBadge');
     const stageTitle = document.getElementById('stageTitle');
     const stageRange = document.getElementById('stageRange');
@@ -309,14 +339,13 @@
     function updateUI() {
       if (!state.isFasting || !state.startTime) {
         // Zustand: Essensfenster / Pause
-        stateBadge.textContent = "Essensfenster (8h)";
+        stateBadge.textContent = "Essensfenster";
         stateBadge.className = "text-xs px-2.5 py-0.5 rounded-full font-semibold bg-[#2c2c2e] text-[#8e8e93]";
         
-        timerSubLabel.textContent = "Verbleibend";
+        timerSubLabel.textContent = "Verbleibende Zeit";
         mainTimeDisplay.textContent = "16:00:00";
-        elapsedDisplay.textContent = "Ziel: 16 Stunden Fasten";
         ringPercentBadge.textContent = "0%";
-        ringPercentBadge.className = "mt-2 text-xs font-bold px-2.5 py-0.5 rounded-full bg-[#2c2c2e] text-[#8e8e93]";
+        ringPercentBadge.className = "mt-2.5 text-xs font-bold px-2.5 py-0.5 rounded-full bg-[#2c2c2e] text-[#8e8e93]";
 
         startTimeLabel.textContent = "--:--";
         endTimeLabel.textContent = "--:--";
@@ -324,21 +353,24 @@
         progressCircle.style.strokeDashoffset = CIRCUMFERENCE;
         progressCircle.setAttribute('stroke', '#ff9f0a');
 
-        mainActionButton.className = "flex-1 py-4 px-6 rounded-2xl font-bold text-base flex items-center justify-center gap-2 transition duration-200 btn-press shadow-lg shadow-[#ff9f0a]/10 bg-[#ff9f0a] text-black";
-        actionButtonText.textContent = "Fasten beginnen";
-        mainActionButton.querySelector('i')?.setAttribute('data-lucide', 'play');
+        if (lastRenderedFastingState !== false) {
+          mainActionButton.className = "flex-1 py-4 px-6 rounded-2xl font-bold text-base flex items-center justify-center gap-2 transition duration-200 btn-press shadow-lg shadow-[#ff9f0a]/10 bg-[#ff9f0a] text-black";
+          actionButtonText.textContent = "Fasten beginnen";
+          actionButtonIcon.innerHTML = '<i data-lucide="play" class="w-5 h-5 fill-current"></i>';
+          lucide.createIcons();
+          lastRenderedFastingState = false;
+        }
 
-        stageTitle.textContent = "Essensfenster (8h)";
+        stageTitle.textContent = "Essensfenster";
         stageRange.textContent = "Pause";
-        stageDescription.textContent = "Aktuell läuft kein Timer. Du befindest dich im 8-Stunden-Fenster für deine Mahlzeiten.";
+        stageDescription.textContent = "Aktuell läuft kein Timer. Nimm deine Mahlzeiten ein und starte das Fasten nach dem letzten Essen.";
         stageIndicatorDot.style.backgroundColor = '#8e8e93';
         stageIndicatorDot.classList.remove('animate-pulse');
-        lucide.createIcons();
         return;
       }
 
       // Aktiver Fasten-Zustand
-      stateBadge.textContent = "Fasten aktiv (16h)";
+      stateBadge.textContent = "Fasten aktiv";
       stateBadge.className = "text-xs px-2.5 py-0.5 rounded-full font-semibold bg-[#ff9f0a]/20 text-[#ff9f0a]";
 
       const start = new Date(state.startTime);
@@ -348,11 +380,11 @@
       const remainingMs = targetEnd - now;
       const elapsedHours = elapsedMs / (1000 * 60 * 60);
 
-      // Start & Endzeit-Anzeige
-      startTimeLabel.textContent = start.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
-      endTimeLabel.textContent = targetEnd.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+      // Start & Endzeit-Anzeige (Uhrzeit)
+      startTimeLabel.textContent = start.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) + ' Uhr';
+      endTimeLabel.textContent = targetEnd.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) + ' Uhr';
 
-      // Ring-Fortschritt
+      // Ring-Fortschritt (wird immer mehr orange)
       const ratio = Math.min(Math.max(elapsedMs / TARGET_MS, 0), 1);
       const offset = CIRCUMFERENCE - (ratio * CIRCUMFERENCE);
       progressCircle.style.strokeDashoffset = offset;
@@ -361,30 +393,31 @@
       ringPercentBadge.textContent = `${percent}%`;
 
       if (remainingMs > 0) {
-        // Fasten läuft noch: Verbleibende Zeit im Ring
+        // Fasten läuft noch: Verbleibende Zeit ausschließlich in der Mitte des Rings
         timerSubLabel.textContent = "Verbleibende Zeit";
         mainTimeDisplay.textContent = formatMs(remainingMs);
-        elapsedDisplay.textContent = `Gefastet: ${formatHoursMinutes(elapsedMs)}`;
         progressCircle.setAttribute('stroke', '#ff9f0a');
-        ringPercentBadge.className = "mt-2 text-xs font-bold px-2.5 py-0.5 rounded-full bg-[#ff9f0a]/20 text-[#ff9f0a]";
+        ringPercentBadge.className = "mt-2.5 text-xs font-bold px-2.5 py-0.5 rounded-full bg-[#ff9f0a]/20 text-[#ff9f0a]";
       } else {
-        // 16 Stunden geschafft (+ Überhang)
+        // 16 Stunden geschafft (+ Bonuszeit)
         const overtimeMs = now - targetEnd;
-        timerSubLabel.textContent = "Überzeit (+)";
+        timerSubLabel.textContent = "Ziel erreicht (+)";
         mainTimeDisplay.textContent = `+${formatMs(overtimeMs)}`;
-        elapsedDisplay.textContent = `Gefastet: ${formatHoursMinutes(elapsedMs)}`;
         progressCircle.setAttribute('stroke', '#30d158');
-        ringPercentBadge.className = "mt-2 text-xs font-bold px-2.5 py-0.5 rounded-full bg-[#30d158]/20 text-[#30d158]";
+        ringPercentBadge.className = "mt-2.5 text-xs font-bold px-2.5 py-0.5 rounded-full bg-[#30d158]/20 text-[#30d158]";
       }
 
       // Hauptbutton auf "Beenden" stellen
-      mainActionButton.className = "flex-1 py-4 px-6 rounded-2xl font-bold text-base flex items-center justify-center gap-2 transition duration-200 btn-press shadow-lg shadow-red-500/10 bg-[#ff453a] text-white";
-      actionButtonText.textContent = "Fasten beenden";
-      mainActionButton.querySelector('i')?.setAttribute('data-lucide', 'square');
+      if (lastRenderedFastingState !== true) {
+        mainActionButton.className = "flex-1 py-4 px-6 rounded-2xl font-bold text-base flex items-center justify-center gap-2 transition duration-200 btn-press shadow-lg shadow-red-500/10 bg-[#ff453a] text-white";
+        actionButtonText.textContent = "Fasten beenden";
+        actionButtonIcon.innerHTML = '<i data-lucide="square" class="w-5 h-5 fill-current"></i>';
+        lucide.createIcons();
+        lastRenderedFastingState = true;
+      }
 
       // Phase ermitteln
       updatePhase(elapsedHours);
-      lucide.createIcons();
     }
 
     function updatePhase(hours) {
@@ -486,14 +519,13 @@
               <div class="flex items-center gap-2">
                 <span class="text-sm font-semibold text-white">16:8 Fasten</span>
                 <span class="text-[10px] px-1.5 py-0.5 rounded font-bold ${item.success ? 'bg-[#30d158]/20 text-[#30d158]' : 'bg-[#ff9f0a]/20 text-[#ff9f0a]'}">
-                  ${item.success ? 'Ziel erreicht (16h+)' : 'Vorzeitig beendet'}
+                  ${item.success ? 'Ziel erreicht' : 'Vorzeitig beendet'}
                 </span>
               </div>
               <span class="text-xs text-[#8e8e93]">${dateStr}</span>
             </div>
             <div class="text-right">
               <span class="text-base font-bold font-mono text-white">${item.durationHours}h</span>
-              <div class="text-[10px] text-[#8e8e93]">Ziel: 16h</div>
             </div>
           </div>
         `;
@@ -513,13 +545,6 @@
       const minutes = Math.floor((totalSec % 3600) / 60);
       const seconds = totalSec % 60;
       return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-    }
-
-    function formatHoursMinutes(ms) {
-      const totalMin = Math.floor(ms / 60000);
-      const hours = Math.floor(totalMin / 60);
-      const minutes = totalMin % 60;
-      return `${hours} Std. ${minutes} Min.`;
     }
 
     window.onload = init;
