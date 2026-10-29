@@ -3,21 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Meine App</title>
+  <title>Fasten 16:8</title>
 
-  <!-- iOS Webclip / PWA Tags -->
+  <!-- iOS PWA / Webclip Tags für den Homescreen -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Meine App">
-  <link rel="apple-touch-icon" href="icon.png">
-  <link rel="manifest" href="manifest.json">
+  <meta name="apple-mobile-web-app-title" content="Fasten">
+  <meta name="theme-color" content="#000000">
+
+  <!-- Lucide Icons & Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
 
   <style>
     :root {
-      --bg: #121212;
-      --card-bg: #1e1e1e;
-      --text: #f0f0f0;
-      --accent: #007aff;
+      --bg: #000000;
+      --card-bg: #1c1c1e;
+      --card-sub: #2c2c2e;
+      --orange: #ff9f0a;
+      --green: #30d158;
+      --red: #ff453a;
+      --text-muted: #8e8e93;
     }
 
     * {
@@ -26,76 +32,495 @@
     }
 
     body {
-      margin: 0;
-      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
       background-color: var(--bg);
-      color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", sans-serif;
+      padding-top: max(env(safe-area-inset-top), 18px);
+      padding-bottom: max(env(safe-area-inset-bottom), 24px);
+      padding-left: max(env(safe-area-inset-left), 18px);
+      padding-right: max(env(safe-area-inset-right), 18px);
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
       user-select: none;
       -webkit-user-select: none;
+      overflow-x: hidden;
     }
 
-    header {
-      padding: 16px 20px;
-      font-size: 20px;
-      font-weight: 700;
-      border-bottom: 1px solid #2c2c2e;
+    /* Kreis-Animation */
+    .progress-ring__circle {
+      transition: stroke-dashoffset 0.85s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.4s ease;
+      transform: rotate(-90deg);
+      transform-origin: 50% 50%;
     }
 
-    main {
-      padding: 20px;
-      flex: 1;
+    .btn-press:active {
+      transform: scale(0.97);
+      opacity: 0.9;
     }
 
-    .card {
-      background: var(--card-bg);
-      padding: 16px;
-      border-radius: 14px;
-      margin-bottom: 16px;
-      border: 1px solid #2a2a2a;
+    .ios-blur {
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
     }
 
-    button {
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      border-radius: 10px;
-      padding: 12px 20px;
-      font-size: 16px;
-      font-weight: 600;
-      width: 100%;
-      cursor: pointer;
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
     }
-
-    button:active {
-      opacity: 0.8;
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
     }
   </style>
 </head>
-<body>
+<body class="flex flex-col justify-between max-w-md mx-auto min-h-screen">
 
-  <header>Meine Mini-App</header>
-
-  <main>
-    <div class="card">
-      <p>App läuft als native Web-App ohne Safari-Rahmen.</p>
-      <button id="counterBtn">Klicks: 0</button>
+  <!-- HEADER -->
+  <header class="flex justify-between items-center py-2">
+    <div>
+      <span class="text-xs uppercase tracking-wider text-[#8e8e93] font-semibold" id="currentDateDisplay">HEUTE</span>
+      <h1 class="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
+        16:8 Fasten
+        <span id="stateBadge" class="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-[#ff9f0a]/20 text-[#ff9f0a]">
+          Fastenfenster
+        </span>
+      </h1>
     </div>
+    
+    <button onclick="openHistoryModal()" class="w-10 h-10 rounded-full bg-[#1c1c1e] border border-[#2c2c2e] flex items-center justify-center text-[#8e8e93] active:text-white btn-press">
+      <i data-lucide="history" class="w-5 h-5"></i>
+    </button>
+  </header>
+
+  <!-- HAUPTINHALT / TIMER RING -->
+  <main class="flex-1 flex flex-col items-center justify-center my-3">
+    
+    <!-- Apple Watch / Health Fortschritts-Ring -->
+    <div class="relative w-72 h-72 sm:w-80 sm:h-80 flex items-center justify-center">
+      <svg class="w-full h-full transform" viewBox="0 0 240 240">
+        <!-- Hintergrundkreis -->
+        <circle
+          cx="120"
+          cy="120"
+          r="100"
+          stroke="#2c2c2e"
+          stroke-width="15"
+          fill="transparent"
+          stroke-linecap="round"
+        />
+        <!-- Dynamischer Fortschrittskreis -->
+        <circle
+          id="progressCircle"
+          class="progress-ring__circle"
+          cx="120"
+          cy="120"
+          r="100"
+          stroke="#ff9f0a"
+          stroke-width="15"
+          fill="transparent"
+          stroke-linecap="round"
+          stroke-dasharray="628.318"
+          stroke-dashoffset="628.318"
+        />
+      </svg>
+
+      <!-- Zentrierte Zeitanzeige -->
+      <div class="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
+        <span id="timerSubLabel" class="text-xs font-semibold uppercase tracking-wider text-[#8e8e93] mb-1">
+          Bereit
+        </span>
+        <div id="mainTimeDisplay" class="text-4xl sm:text-5xl font-extrabold tracking-tight tabular-nums font-mono text-white">
+          16:00:00
+        </div>
+        <span id="elapsedDisplay" class="text-xs text-[#8e8e93] mt-1.5 font-medium">
+          Ziel: 16 Stunden
+        </span>
+        <div id="ringPercentBadge" class="mt-2 text-xs font-bold px-2.5 py-0.5 rounded-full bg-[#2c2c2e] text-[#8e8e93]">
+          0%
+        </div>
+      </div>
+    </div>
+
+    <!-- Start & Ziel Zeit-Karten -->
+    <div class="w-full grid grid-cols-2 gap-3 mt-4">
+      <div class="bg-[#1c1c1e] p-3.5 rounded-2xl border border-[#2c2c2e]/70 flex flex-col items-center justify-center">
+        <span class="text-[11px] text-[#8e8e93] uppercase font-semibold tracking-wider">Startzeit</span>
+        <span id="startTimeLabel" class="text-base font-semibold text-white mt-0.5">--:--</span>
+      </div>
+      <div class="bg-[#1c1c1e] p-3.5 rounded-2xl border border-[#2c2c2e]/70 flex flex-col items-center justify-center">
+        <span class="text-[11px] text-[#8e8e93] uppercase font-semibold tracking-wider">Fastenende (16h)</span>
+        <span id="endTimeLabel" class="text-base font-semibold text-white mt-0.5">--:--</span>
+      </div>
+    </div>
+
+    <!-- 16:8 KÖRPER-PHASEN INFO -->
+    <div class="w-full bg-[#1c1c1e] rounded-2xl p-4 mt-3 border border-[#2c2c2e]/70">
+      <div class="flex items-center justify-between mb-1.5">
+        <div class="flex items-center gap-2">
+          <div id="stageIndicatorDot" class="w-2.5 h-2.5 rounded-full bg-[#8e8e93]"></div>
+          <span id="stageTitle" class="text-sm font-semibold text-white">Essensfenster (8h)</span>
+        </div>
+        <span id="stageRange" class="text-xs text-[#8e8e93] font-mono">Pause</span>
+      </div>
+      <p id="stageDescription" class="text-xs text-[#8e8e93] leading-relaxed">
+        Aktuell kein Fasten aktiv. Nimm deine Mahlzeiten ein und starte das Fasten nach dem letzten Essen.
+      </p>
+    </div>
+
   </main>
 
-  <script>
-    const btn = document.getElementById('counterBtn');
-    let count = parseInt(localStorage.getItem('app_klicks') || '0', 10);
-    btn.textContent = `Klicks: ${count}`;
+  <!-- AKTION-BUTTONS -->
+  <footer class="w-full pt-2">
+    <div class="flex gap-2">
+      <button 
+        id="mainActionButton" 
+        onclick="handleMainAction()"
+        class="flex-1 py-4 px-6 rounded-2xl font-bold text-base flex items-center justify-center gap-2 transition duration-200 btn-press shadow-lg shadow-[#ff9f0a]/10 bg-[#ff9f0a] text-black">
+        <i data-lucide="play" class="w-5 h-5 fill-current"></i>
+        <span id="actionButtonText">Fasten beginnen</span>
+      </button>
 
-    btn.addEventListener('click', () => {
-      count++;
-      btn.textContent = `Klicks: ${count}`;
-      localStorage.setItem('app_klicks', count);
-    });
+      <!-- Startzeit nachträglich anpassen -->
+      <button 
+        onclick="openEditStartModal()" 
+        title="Startzeit anpassen"
+        class="w-14 rounded-2xl bg-[#1c1c1e] border border-[#2c2c2e] flex items-center justify-center text-[#8e8e93] active:text-white btn-press">
+        <i data-lucide="clock" class="w-5 h-5"></i>
+      </button>
+    </div>
+  </footer>
+
+  <!-- MODAL: STARTZEIT ANPASSEN -->
+  <div id="editStartModal" class="fixed inset-0 bg-black/75 ios-blur z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-[#1c1c1e] border-t sm:border border-[#2c2c2e] rounded-t-3xl sm:rounded-3xl w-full max-w-md p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-bold text-white">Startzeit anpassen</h2>
+        <button onclick="closeEditStartModal()" class="w-8 h-8 rounded-full bg-[#2c2c2e] text-[#8e8e93] flex items-center justify-center">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+      <p class="text-xs text-[#8e8e93] mb-4">
+        Hast du das Eintragen vergessen oder gestern Abend begonnen? Hier kannst du die Uhrzeit beliebig vordatieren.
+      </p>
+
+      <div class="space-y-4">
+        <input 
+          type="datetime-local" 
+          id="customStartTimeInput" 
+          class="w-full bg-[#2c2c2e] text-white p-3.5 rounded-xl border border-[#3a3a3c] text-center text-lg font-medium focus:outline-none focus:border-[#ff9f0a]"
+        >
+        <button 
+          onclick="applyCustomStartTime()" 
+          class="w-full py-3.5 rounded-xl bg-[#ff9f0a] text-black font-bold btn-press">
+          Übernehmen
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: HISTORIE -->
+  <div id="historyModal" class="fixed inset-0 bg-black/75 ios-blur z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-[#1c1c1e] border-t sm:border border-[#2c2c2e] rounded-t-3xl sm:rounded-3xl w-full max-w-md p-6 max-h-[85vh] flex flex-col">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-bold text-white">Vergangene 16:8 Fasten</h2>
+        <button onclick="closeHistoryModal()" class="w-8 h-8 rounded-full bg-[#2c2c2e] text-[#8e8e93] flex items-center justify-center">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+      
+      <div id="historyListContainer" class="flex-1 overflow-y-auto space-y-2.5 pr-1 no-scrollbar">
+        <!-- Dynamischer Verlauf -->
+      </div>
+
+      <button 
+        onclick="clearHistory()" 
+        class="mt-4 py-2.5 text-xs text-red-400 text-center font-medium opacity-80 active:opacity-100">
+        Verlauf löschen
+      </button>
+    </div>
+  </div>
+
+  <script>
+    const FAST_HOURS = 16;
+    const EAT_HOURS = 8;
+    const TARGET_MS = FAST_HOURS * 3600 * 1000;
+    const CIRCLE_RADIUS = 100;
+    const CIRCUMFERENCE = 2 * Math.PI * CIRCLE_RADIUS;
+
+    // Spezifische 16:8 Stoffwechselstufen
+    const PHASES = [
+      { maxHours: 4, title: 'Blutzuckerspiegel fällt', range: '0 - 4 Std.', desc: 'Der Insulinspiegel sinkt rapide. Magen und Verdauungstrakt kommen zur Ruhe.', color: '#30d158' },
+      { maxHours: 12, title: 'Glykogenspeicher leeren sich', range: '4 - 12 Std.', desc: 'Die Energie aus der letzten Mahlzeit ist aufgebraucht. Der Körper bereitet die Fettverbrennung vor.', color: '#ff9f0a' },
+      { maxHours: 16, title: 'Fettverbrennung & Ketose', range: '12 - 16 Std.', desc: 'Fettsäuren werden in Ketonkörper umgewandelt. Mentale Frische und aktive Fettverbrennung.', color: '#ff375f' },
+      { maxHours: 999, title: 'Ziel erreicht (16h+)', range: '16+ Std.', desc: 'Perfektes 16-Stunden-Fenster abgeschlossen! Die zelluläre Selbstreinigung (Autophagie) beginnt.', color: '#bf5af2' }
+    ];
+
+    let state = {
+      isFasting: false,
+      startTime: null,
+      history: []
+    };
+
+    // DOM-Elemente
+    const progressCircle = document.getElementById('progressCircle');
+    const mainTimeDisplay = document.getElementById('mainTimeDisplay');
+    const timerSubLabel = document.getElementById('timerSubLabel');
+    const elapsedDisplay = document.getElementById('elapsedDisplay');
+    const ringPercentBadge = document.getElementById('ringPercentBadge');
+    const startTimeLabel = document.getElementById('startTimeLabel');
+    const endTimeLabel = document.getElementById('endTimeLabel');
+    const mainActionButton = document.getElementById('mainActionButton');
+    const actionButtonText = document.getElementById('actionButtonText');
+    const stateBadge = document.getElementById('stateBadge');
+    const stageTitle = document.getElementById('stageTitle');
+    const stageRange = document.getElementById('stageRange');
+    const stageDescription = document.getElementById('stageDescription');
+    const stageIndicatorDot = document.getElementById('stageIndicatorDot');
+
+    function init() {
+      loadState();
+      updateDateDisplay();
+      updateUI();
+      setInterval(updateUI, 1000);
+      lucide.createIcons();
+    }
+
+    function loadState() {
+      const saved = localStorage.getItem('fasting_16_8_state');
+      if (saved) {
+        try {
+          state = { ...state, ...JSON.parse(saved) };
+        } catch (e) {
+          console.error("State Ladefehler:", e);
+        }
+      }
+    }
+
+    function saveState() {
+      localStorage.setItem('fasting_16_8_state', JSON.stringify(state));
+    }
+
+    function updateDateDisplay() {
+      const d = new Date();
+      const options = { weekday: 'short', day: 'numeric', month: 'short' };
+      document.getElementById('currentDateDisplay').textContent = d.toLocaleDateString('de-DE', options).toUpperCase();
+    }
+
+    function updateUI() {
+      if (!state.isFasting || !state.startTime) {
+        // Zustand: Essensfenster / Pause
+        stateBadge.textContent = "Essensfenster (8h)";
+        stateBadge.className = "text-xs px-2.5 py-0.5 rounded-full font-semibold bg-[#2c2c2e] text-[#8e8e93]";
+        
+        timerSubLabel.textContent = "Bereit für 16:8";
+        mainTimeDisplay.textContent = "16:00:00";
+        elapsedDisplay.textContent = "Ziel: 16 Stunden Fasten";
+        ringPercentBadge.textContent = "0%";
+        ringPercentBadge.className = "mt-2 text-xs font-bold px-2.5 py-0.5 rounded-full bg-[#2c2c2e] text-[#8e8e93]";
+
+        startTimeLabel.textContent = "--:--";
+        endTimeLabel.textContent = "--:--";
+
+        progressCircle.style.strokeDashoffset = CIRCUMFERENCE;
+        progressCircle.setAttribute('stroke', '#ff9f0a');
+
+        mainActionButton.className = "flex-1 py-4 px-6 rounded-2xl font-bold text-base flex items-center justify-center gap-2 transition duration-200 btn-press shadow-lg shadow-[#ff9f0a]/10 bg-[#ff9f0a] text-black";
+        actionButtonText.textContent = "Fasten beginnen";
+        mainActionButton.querySelector('i')?.setAttribute('data-lucide', 'play');
+
+        stageTitle.textContent = "Essensfenster (8h)";
+        stageRange.textContent = "Pause";
+        stageDescription.textContent = "Aktuell läuft kein Timer. Du befindest dich im 8-Stunden-Fenster für deine Mahlzeiten.";
+        stageIndicatorDot.style.backgroundColor = '#8e8e93';
+        stageIndicatorDot.classList.remove('animate-pulse');
+        lucide.createIcons();
+        return;
+      }
+
+      // Aktiver Fasten-Zustand
+      stateBadge.textContent = "Fasten aktiv (16h)";
+      stateBadge.className = "text-xs px-2.5 py-0.5 rounded-full font-semibold bg-[#ff9f0a]/20 text-[#ff9f0a]";
+
+      const start = new Date(state.startTime);
+      const now = new Date();
+      const targetEnd = new Date(start.getTime() + TARGET_MS);
+      const elapsedMs = Math.max(0, now - start);
+      const remainingMs = targetEnd - now;
+      const elapsedHours = elapsedMs / (1000 * 60 * 60);
+
+      // Start & Endzeit-Anzeige
+      startTimeLabel.textContent = start.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+      endTimeLabel.textContent = targetEnd.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+
+      // Ring-Fortschritt
+      const ratio = Math.min(Math.max(elapsedMs / TARGET_MS, 0), 1);
+      const offset = CIRCUMFERENCE - (ratio * CIRCUMFERENCE);
+      progressCircle.style.strokeDashoffset = offset;
+
+      const percent = Math.floor((elapsedMs / TARGET_MS) * 100);
+      ringPercentBadge.textContent = `${percent}%`;
+
+      if (remainingMs > 0) {
+        // Fasten läuft noch
+        timerSubLabel.textContent = "Verbleibende Zeit";
+        mainTimeDisplay.textContent = formatMs(remainingMs);
+        elapsedDisplay.textContent = `Gefastet: ${formatHoursMinutes(elapsedMs)}`;
+        progressCircle.setAttribute('stroke', '#ff9f0a');
+        ringPercentBadge.className = "mt-2 text-xs font-bold px-2.5 py-0.5 rounded-full bg-[#ff9f0a]/20 text-[#ff9f0a]";
+      } else {
+        // 16 Stunden geschafft (+ Überhang)
+        const overtimeMs = now - targetEnd;
+        timerSubLabel.textContent = "Ziel erreicht! (+ Überzeit)";
+        mainTimeDisplay.textContent = `+${formatMs(overtimeMs)}`;
+        elapsedDisplay.textContent = `Gesamt gefastet: ${formatHoursMinutes(elapsedMs)}`;
+        progressCircle.setAttribute('stroke', '#30d158');
+        ringPercentBadge.className = "mt-2 text-xs font-bold px-2.5 py-0.5 rounded-full bg-[#30d158]/20 text-[#30d158]";
+      }
+
+      // Hauptbutton auf "Beenden" stellen
+      mainActionButton.className = "flex-1 py-4 px-6 rounded-2xl font-bold text-base flex items-center justify-center gap-2 transition duration-200 btn-press shadow-lg shadow-red-500/10 bg-[#ff453a] text-white";
+      actionButtonText.textContent = "Fasten beenden";
+      mainActionButton.querySelector('i')?.setAttribute('data-lucide', 'square');
+
+      // Phase ermitteln
+      updatePhase(elapsedHours);
+      lucide.createIcons();
+    }
+
+    function updatePhase(hours) {
+      stageIndicatorDot.classList.add('animate-pulse');
+      for (const p of PHASES) {
+        if (hours < p.maxHours || p.maxHours === 999) {
+          stageTitle.textContent = p.title;
+          stageRange.textContent = p.range;
+          stageDescription.textContent = p.desc;
+          stageIndicatorDot.style.backgroundColor = p.color;
+          break;
+        }
+      }
+    }
+
+    function handleMainAction() {
+      if (!state.isFasting) {
+        state.isFasting = true;
+        state.startTime = (new Date()).toISOString();
+        saveState();
+        updateUI();
+      } else {
+        finishFasting();
+      }
+    }
+
+    function finishFasting() {
+      const start = new Date(state.startTime);
+      const end = new Date();
+      const durationMs = end - start;
+      const durationHours = (durationMs / (1000 * 60 * 60)).toFixed(1);
+
+      state.history.unshift({
+        id: Date.now(),
+        end: end.toISOString(),
+        durationHours: durationHours,
+        success: (durationMs / (1000 * 60 * 60)) >= FAST_HOURS
+      });
+
+      state.isFasting = false;
+      state.startTime = null;
+      saveState();
+      updateUI();
+      openHistoryModal();
+    }
+
+    // Modal Funktionen
+    function openEditStartModal() {
+      const input = document.getElementById('customStartTimeInput');
+      const now = state.startTime ? new Date(state.startTime) : new Date();
+      const tzOffset = now.getTimezoneOffset() * 60000;
+      const localISOTime = (new Date(now.getTime() - tzOffset)).toISOString().slice(0, 16);
+      input.value = localISOTime;
+      document.getElementById('editStartModal').classList.remove('hidden');
+    }
+
+    function closeEditStartModal() {
+      document.getElementById('editStartModal').classList.add('hidden');
+    }
+
+    function applyCustomStartTime() {
+      const val = document.getElementById('customStartTimeInput').value;
+      if (val) {
+        state.startTime = (new Date(val)).toISOString();
+        state.isFasting = true;
+        saveState();
+        updateUI();
+        closeEditStartModal();
+      }
+    }
+
+    function openHistoryModal() {
+      renderHistoryList();
+      document.getElementById('historyModal').classList.remove('hidden');
+    }
+
+    function closeHistoryModal() {
+      document.getElementById('historyModal').classList.add('hidden');
+    }
+
+    function renderHistoryList() {
+      const container = document.getElementById('historyListContainer');
+      if (state.history.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-10 text-[#8e8e93]">
+            <i data-lucide="calendar" class="w-8 h-8 mx-auto mb-2 opacity-40"></i>
+            <p class="text-xs">Noch keine 16:8 Fastenzeiten aufgezeichnet.</p>
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      container.innerHTML = state.history.map(item => {
+        const dateStr = new Date(item.end).toLocaleDateString('de-DE', { day: '2-digit', month: 'short' });
+        return `
+          <div class="bg-[#2c2c2e]/60 p-3.5 rounded-xl border border-[#3a3a3c]/60 flex items-center justify-between">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-sm font-semibold text-white">16:8 Fasten</span>
+                <span class="text-[10px] px-1.5 py-0.5 rounded font-bold ${item.success ? 'bg-[#30d158]/20 text-[#30d158]' : 'bg-[#ff9f0a]/20 text-[#ff9f0a]'}">
+                  ${item.success ? 'Ziel erreicht (16h+)' : 'Vorzeitig beendet'}
+                </span>
+              </div>
+              <span class="text-xs text-[#8e8e93]">${dateStr}</span>
+            </div>
+            <div class="text-right">
+              <span class="text-base font-bold font-mono text-white">${item.durationHours}h</span>
+              <div class="text-[10px] text-[#8e8e93]">Ziel: 16h</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+      lucide.createIcons();
+    }
+
+    function clearHistory() {
+      state.history = [];
+      saveState();
+      renderHistoryList();
+    }
+
+    function formatMs(ms) {
+      const totalSec = Math.floor(ms / 1000);
+      const hours = Math.floor(totalSec / 3600);
+      const minutes = Math.floor((totalSec % 3600) / 60);
+      const seconds = totalSec % 60;
+      return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+
+    function formatHoursMinutes(ms) {
+      const totalMin = Math.floor(ms / 60000);
+      const hours = Math.floor(totalMin / 60);
+      const minutes = totalMin % 60;
+      return `${hours} Std. ${minutes} Min.`;
+    }
+
+    window.onload = init;
   </script>
 </body>
 </html>
